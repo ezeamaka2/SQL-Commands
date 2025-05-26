@@ -18,3 +18,27 @@ DROP COLUMN column_name
 
 #Deleting a Table
 DROP table_name
+
+UPDATING A ROW
+UPDATE table_name
+SET score = 343
+WHERE id=6 (id = the id of the row you want to update)
+
+
+UPDATE customers
+SET score = 0
+WHERE score IS NULL
+
+DELETE FROM customers
+WHERE id>5
+
+SELECT *
+FROM customers
+WHERE id>5
+
+INSERT INTO customers(id, first_name, country,score)
+VALUES (10,'Sahra', NULL, NULL)
+
+To delete everything from a Table
+DELETE FROM table_name
+TRUNCATE TABLE table_name - faster for deleting everything from a large table

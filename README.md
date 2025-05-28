@@ -42,3 +42,10 @@ VALUES (10,'Sahra', NULL, NULL)
 To delete everything from a Table
 DELETE FROM table_name
 TRUNCATE TABLE table_name - faster for deleting everything from a large table
+
+JOINING DATA
+_INNER JOIN (Joining only matching data)
+SELECT *
+FROM table_a
+INNER JOIN table_b
+ON <conditions (example table_a.key = table_b.key)>

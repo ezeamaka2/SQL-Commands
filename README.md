@@ -49,3 +49,28 @@ SELECT *
 FROM table_a
 INNER JOIN table_b
 ON <conditions (example table_a.key = table_b.key)>
+
+_LEFT JOIN
+This join returns all the rows from the left and only the matching data from the right
+SELECT *
+FROM table_a
+LEFT JOIN table_b
+ON <conditions (example table_a.key = table_b.key)>
+
+
+SELECT 
+	O.OrderID,
+	O.Sales,
+	C.FirstName,
+	C.LastName,
+	P.Product,
+	P.Price,
+	E.FirstName,
+	E.LastName
+FROM Sales.Orders AS O
+LEFT JOIN Sales.Customers AS C
+ON O.CustomerID = C.CustomerID
+LEFT JOIN Sales.Products AS P
+ON O.ProductID = P.ProductID
+LEFT JOIN Sales.Employees AS E
+ON O.SalesPersonID = E.EmployeeID

@@ -9,11 +9,11 @@ ORDER BY column DESC/ASC
 
 Data Definition Command
 ## Adding a new column to an existing table
-ALTER TABLLE Table_name
+ALTER TABLE Table_name
 ADD email VARCHAR(50) NOT NULL 
 
 ## Deleting a particular column from a table
-ALTER TABLLE Table_name
+ALTER TABLE Table_name
 DROP COLUMN column_name
 
 #Deleting a Table

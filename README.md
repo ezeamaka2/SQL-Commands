@@ -74,3 +74,70 @@ LEFT JOIN Sales.Products AS P
 ON O.ProductID = P.ProductID
 LEFT JOIN Sales.Employees AS E
 ON O.SalesPersonID = E.EmployeeID
+
+
+SELECT
+	Product,
+	Price,
+	AveragePrice
+FROM(
+	SELECT
+	ProductID,
+	Product,
+	Price,
+	AVG(Price) OVER() AS AveragePrice
+FROM Sales.Products
+)t
+WHERE Price > AveragePrice
+
+SELECT
+	*,
+	ROW_NUMBER() OVER(ORDER BY RankCust DESC)
+FROM(
+	SELECT
+	CustomerID,
+	SUM(Sales) As RankCust
+FROM Sales.Orders
+GROUP BY CustomerID
+)t
+
+
+SELECT
+	ProductID,
+	Product,
+	Price,
+	(SELECT COUNT(OrderID) FROM Sales.Orders) AS TotalOrders
+FROM Sales.Products
+
+
+SELECT
+	*
+FROM Sales.Customers l
+LEFT JOIN
+(SELECT
+	CustomerID,
+	COUNT(CustomerID) AS toalOrder
+FROM Sales.Orders r
+GROUP BY CustomerID)t
+ON l.CustomerID = t.CustomerID
+
+
+SELECT
+	*
+FROM Sales.Orders
+WHERE CustomerID IN (
+	SELECT
+	CustomerID
+FROM Sales.Customers
+WHERE Country = 'Germany'
+)
+
+
+SELECT
+	*
+FROM Sales.Employees
+WHERE Gender = 'F' AND Salary >ALL (SELECT
+	Salary
+FROM Sales.Employees
+WHERE Gender = 'M')
+

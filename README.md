@@ -141,3 +141,61 @@ WHERE Gender = 'F' AND Salary >ALL (SELECT
 FROM Sales.Employees
 WHERE Gender = 'M')
 
+
+Common Table Expression -CTE
+--CTE Query
+--Get the total sales by customers
+WITH CTE_TotalSales AS (
+	SELECT
+	CustomerID,
+	SUM(Sales) AS TotalSales
+FROM Sales.Orders
+GROUP BY CustomerID
+),
+--Get the last order date
+--Second CTE
+CTE_LastOrderDate AS (
+	SELECT
+		CustomerID,
+		MAX(OrderDate) AS LastOrder
+	FROM Sales.Orders
+	GROUP BY CustomerID
+),
+-- Rank customers based on totalSales per customers - Nested CTE example
+CTE_Rank_Customers AS (
+	SELECT
+		CustomerID,
+		TotalSales,
+		RANK() OVER(ORDER BY TotalSales DESC) AS CustomerRank
+	FROM CTE_TotalSales
+),
+--Segment the customers based on totalSales
+CTE_Customer_Segment AS (
+	SELECT
+		CustomerID,
+		CASE 
+			WHEN TotalSales > 100 THEN 'High'
+			WHEN TotalSales > 50 THEN 'Medium'
+			ELSE 'Low'
+		END AS CustomerSegment
+	FROM CTE_TotalSales
+)
+
+-- MAIN Query
+SELECT
+	c.CustomerID,
+	c.FirstName,
+	c.LastName,
+	COALESCE(cts.TotalSales, 0) SalesByCust,
+	(lod.LastOrder) As LastOrderDate,
+	crnk.CustomerRank,
+	ccs.CustomerSegment
+FROM Sales.Customers c
+LEFT JOIN CTE_TotalSales cts
+ON c.CustomerID = cts.CustomerID
+LEFT JOIN CTE_LastOrderDate lod
+ON c.CustomerID = lod.CustomerID
+LEFT JOIN CTE_Rank_Customers crnk
+ON c.CustomerID = crnk.CustomerID
+LEFT JOIN CTE_Customer_Segment ccs
+ON c.CustomerID = ccs.CustomerID

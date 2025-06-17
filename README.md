@@ -199,3 +199,32 @@ LEFT JOIN CTE_Rank_Customers crnk
 ON c.CustomerID = crnk.CustomerID
 LEFT JOIN CTE_Customer_Segment ccs
 ON c.CustomerID = ccs.CustomerID
+
+
+VIEW
+CREATE VIEW Sales.V_Order_Details_EU AS (
+SELECT
+	o.OrderID,
+	OrderDate,
+	p.Product,
+	p.Category,
+	CONCAT(c.FirstName, ' ' , c.LastName) CustomerName,
+	c.Country CustomerCountry,
+	COALESCE(e.FirstName, ' ') + ' ' + COALESCE(e.LastName, ' ') SalesName,
+	e.Department,
+	o.Sales,
+	o.Quantity
+FROM Sales.Orders o
+LEFT JOIN Sales.Products p
+ON o.ProductID = p.ProductID
+LEFT JOIN Sales.Customers c
+ON o.CustomerID = c.CustomerID
+LEFT JOIN Sales.Employees e
+ON o.SalesPersonID = e.EmployeeID
+WHERE c.Country <> 'USA'
+)
+
+
+SELECT
+	*
+FROM Sales.V_Order_Details_EU

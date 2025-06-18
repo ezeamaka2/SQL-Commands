@@ -228,3 +228,20 @@ WHERE c.Country <> 'USA'
 SELECT
 	*
 FROM Sales.V_Order_Details_EU
+
+
+
+SELECT
+	*
+	INTO #Orders
+FROM Sales.Orders
+
+DELETE FROM #Orders
+WHERE OrderStatus = 'Delivered'
+
+SELECT
+	*
+	INTO Sales.OrderTest
+FROM #Orders
+
+SELECT * FROM Sales.OrderTest

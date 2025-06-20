@@ -245,3 +245,103 @@ SELECT
 FROM #Orders
 
 SELECT * FROM Sales.OrderTest
+
+
+STORED PROCEDURE
+--Creating a stored procedure
+ALTER PROCEDURE USACustomerSummary AS
+BEGIN
+	SELECT
+		COUNT(*) TotalCustomer,
+		AVG(score) AvgScore
+	FROM Sales.Customers
+	WHERE Country = 'USA'
+END
+
+EXEC USACustomerSummary
+
+-- Passing paramter into a stored procedureb 
+
+ALTER PROCEDURE USACustomerSummary @Country NVARCHAR(50) AS
+BEGIN
+	SELECT
+		COUNT(*) TotalCustomer,
+		AVG(score) AvgScore
+	FROM Sales.Customers
+	WHERE Country = @Country
+END
+
+-- Procedure with default value
+CREATE PROCEDURE USACustomerSummary @Country NVARCHAR(50) = 'USA' AS
+BEGIN
+	SELECT
+		COUNT(*) TotalCustomer,
+		AVG(score) AvgScore
+	FROM Sales.Customers
+	WHERE Country = @Country;
+
+
+	-- Multiple SQL Query in a stored procedure
+-- Find the toal number of orders and total sales
+
+SELECT
+	COUNT(OrderID) TotalOrders,
+	SUM(Sales) TotalSales
+FROM Sales.Orders o
+LEFT JOIN Sales.Customers c
+ON c.CustomerID = o.CustomerID
+WHERE c.Country = @Country;
+
+END
+
+EXEC USACustomerSummary 'Germany'
+EXEC USACustomerSummary @Country = 'USA'
+
+-- To delete procedure
+DROP PROCEDURE USACustomerSummary
+
+
+-- Working with variable in a stored procedure
+-- Procedure with default value
+ALTER PROCEDURE USACustomerSummary @Country NVARCHAR(50) = 'USA' AS
+BEGIN
+
+DECLARE @TotalCustomer INT, @AvgScore FLOAT;
+
+-- Prepare and clean up data
+
+IF EXISTS (SELECT 1 FROM Sales.Customers WHERE Country = @Country AND Score IS NULL)
+BEGIN
+	PRINT('Updating null')
+	UPDATE Sales.Customers
+	SET Score = 0
+	WHERE Country = @Country AND Score IS NULL;
+END
+
+ELSE
+BEGIN
+	PRINT('No null value was found')
+END;
+
+--Generate report
+	SELECT
+		@TotalCustomer = COUNT(*),
+		@AvgScore = AVG(score)
+	FROM Sales.Customers
+	WHERE Country = @Country;
+
+
+PRINT 'Total Customer from ' + @Country + ' : ' + CAST(@TotalCustomer AS NVARCHAR)
+PRINT 'Average Score from ' + @Country + ' : ' + CAST(@AvgScore AS NVARCHAR)
+
+SELECT
+	COUNT(OrderID) TotalOrders,
+	SUM(Sales) TotalSales
+FROM Sales.Orders o
+LEFT JOIN Sales.Customers c
+ON c.CustomerID = o.CustomerID
+WHERE c.Country = @Country;
+
+END
+
+SELECT * FROM Sales.Customers

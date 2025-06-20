@@ -345,3 +345,34 @@ WHERE c.Country = @Country;
 END
 
 SELECT * FROM Sales.Customers
+
+
+--TRIGGERS
+CREATE TABLE Sales.EmployeeLog (
+	LogID INT IDENTITY(1,1) PRIMARY KEY,
+	EmployeeID INT,
+	LogMessage VARCHAR(255),
+	LogDate DATE
+)
+
+SELECT * FROM Sales.EmployeeLog
+
+--CREATEING TRIGGER
+CREATE TRIGGER tri_AfterInsertEmployee ON Sales.Employees
+AFTER INSERT
+AS
+BEGIN
+	INSERT INTO Sales.EmployeeLog(EmployeeID, LogMessage, LogDate)
+	SELECT
+		EmployeeID,
+		'New employee has been added: ' + CAST(EmployeeID AS VARCHAR),
+		GETDATE()
+	FROM INSERTED
+END
+
+
+--TRIGGERING THE TRIGGER By Inserting a new data 
+INSERT INTO Sales.Employees
+VALUES
+(7, 'Maria', 'Doe', 'HR', '1900-01-12', 'F', 80000, 3)
+
